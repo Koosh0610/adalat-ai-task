@@ -35,7 +35,7 @@ ffmpeg
 
 1. Clone the repository:
 ```bash
-git clone [[repository-url](https://github.com/Koosh0610/adalat-ai-task/)]
+git clone [(https://github.com/Koosh0610/adalat-ai-task/)]
 ```
 
 2. Create and activate a virtual environment (recommended):
