@@ -15,6 +15,7 @@ A comprehensive pipeline for downloading YouTube videos, segmenting the audio in
 
 ### Python Version
 - Python 3.8 or higher
+- CUDA Toolkit 11.8 or compatible version (for GPU support)
 
 ### Dependencies
 ```bash
@@ -23,7 +24,6 @@ torch>=1.9.0
 yt-dlp
 pydub
 silero-vad
-nemo-toolkit[all]
 soundfile
 ffmpeg-python
 
@@ -35,7 +35,7 @@ ffmpeg
 
 1. Clone the repository:
 ```bash
-git clone [https://github.com/Koosh0610/adalat-ai-task.git]
+git clone [[repository-url](https://github.com/Koosh0610/adalat-ai-task/)]
 ```
 
 2. Create and activate a virtual environment (recommended):
@@ -44,12 +44,31 @@ python -m venv venv
 source venv/bin/activate  # On Windows, use: venv\Scripts\activate
 ```
 
-3. Install the required packages:
+3. Install PyTorch with CUDA support:
 ```bash
-pip install -r requirements.txt
+# For CUDA 11.8
+pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
 ```
 
-4. Install FFmpeg:
+4. Install NeMo Toolkit:
+```bash
+# Install Cython first
+pip install Cython
+
+# Install nemo_toolkit with all dependencies
+pip install nvidia-pyindex
+pip install nemo_toolkit[all]
+
+# If you encounter any issues, try the following alternative installation:
+pip install git+https://github.com/NVIDIA/NeMo.git@main#egg=nemo_toolkit[all]
+```
+
+5. Install remaining dependencies:
+```bash
+pip install yt-dlp pydub silero-vad soundfile ffmpeg-python
+```
+
+6. Install FFmpeg:
 - **Ubuntu/Debian**:
   ```bash
   sudo apt-get update
@@ -59,7 +78,48 @@ pip install -r requirements.txt
   ```bash
   brew install ffmpeg
   ```
-- **Windows**: Download from [FFmpeg website](https://ffmpeg.org/download.html)
+- **Windows**: 
+  - Download from [FFmpeg website](https://ffmpeg.org/download.html)
+  - Add FFmpeg to your system PATH
+
+### Troubleshooting NeMo Installation
+
+If you encounter issues installing NeMo, try these steps:
+
+1. Ensure CUDA toolkit is properly installed:
+```bash
+# For Ubuntu
+sudo apt-get install nvidia-cuda-toolkit
+```
+
+2. Check CUDA version compatibility:
+```bash
+nvidia-smi
+nvcc --version
+```
+
+3. Clear pip cache if needed:
+```bash
+pip cache purge
+```
+
+4. Install specific versions if needed:
+```bash
+# Install specific torch version
+pip install torch==2.0.1+cu118 torchvision==0.15.2+cu118 torchaudio==2.0.2 --index-url https://download.pytorch.org/whl/cu118
+
+# Then install NeMo
+pip install nemo_toolkit[all]==1.20.0
+```
+
+5. Common Issues:
+   - If you see "CUDA out of memory" errors, reduce batch size in the code
+   - If you see "Cannot import name 'MelAudioPreprocessor'" error, try reinstalling NeMo
+   - For "ImportError: cannot import name 'COMMON_SAFE_ASCII_CHARACTERS'" error:
+     ```bash
+     pip uninstall tqdm
+     pip install tqdm
+     ```
 
 ## Usage
 
@@ -128,3 +188,5 @@ Key configuration parameters can be modified in the code:
 - Transcription Configuration:
   - `batch_size`: 16 (number of segments to process at once)
   - Maximum segment duration: 120 seconds
+
+\
